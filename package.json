@@ -1,13 +1,13 @@
 {
-  "name": "harmoware-vis-pointcloud-demo",
+  "name": "Harmoware-VIS-3D-Text",
   "version": "1.0.0",
-  "description": "harmoware-vis-pointcloud-demo",
+  "description": "Harmoware-VIS-3D-Text",
   "main": "index.js",
   "scripts": {
     "start": "webpack-cli serve --port 3030 --open --mode development",
     "build": "webpack --mode production"
   },
-  "author": "harmoware-vis-pointcloud-demo",
+  "author": "Harmoware-VIS-3D-Text",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "7.18.6",
