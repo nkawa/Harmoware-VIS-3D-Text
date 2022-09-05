@@ -1,0 +1,46 @@
+@import 'harmoware-vis/scss/harmoware.scss';
+
+div.harmovis_controller {
+  @extend .harmovis_controller;
+  width: 230px;
+  ul {
+    list-style-type: none; 
+    padding: 0px; 
+    margin: 0px; 
+    li.flex_row {
+      padding: 5px 0px; 
+      display: flex;
+      flex-direction: row;
+    }
+    li.flex_column {
+      @extend .flex_row;
+      flex-direction: column;
+    }
+  }
+  ol {
+    padding-inline-start: 0px;
+    padding-inline-end: 0px;
+  }
+  li.none_display {
+    width: 0%;  
+    display: none;
+  }
+  button.harmovis_button {
+    width: 100%;  
+  }
+  button.size_button {
+    width: 100%;  
+    font-size: 10px; 
+    padding: 3px 6px;
+    width: auto;  
+  }
+}
+div.harmovis_footer {
+  @extend .harmovis_footer;
+  left: 100px;
+}
+input.harmovis_input_number[type="number"]{
+  @extend .harmovis_input_number;
+  text-align: right;
+  width: 100%;
+}
