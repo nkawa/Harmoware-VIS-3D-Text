@@ -84,7 +84,7 @@ export default class Controller extends React.Component {
             </li>
             <li className="flex_row">
             <label htmlFor="setTextSiza">Text Size</label>
-              <input type="range" value={textSiza} min={0} max={15} step={0.1} onChange={this.setTextSiza.bind(this)}
+              <input type="range" value={textSiza} min={0} max={20} step={0.2} onChange={this.setTextSiza.bind(this)}
                 className='harmovis_input_range' id='setTextSiza' title={clusterNum}/>
             </li>
             </ul>

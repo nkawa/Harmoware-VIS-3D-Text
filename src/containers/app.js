@@ -36,7 +36,7 @@ const App = (props)=>{
   const [viewState, updateViewState] = useState(INITIAL_VIEW_STATE);
   const [saveDataset, setDataset] = useState([[]])
   const [clusterNum, setClusterNum] = useState(10);
-  const [textSiza, setTextSiza] = useState(7.5);
+  const [textSiza, setTextSiza] = useState(10);
   const [clusterColor, setClusterColor] = useState(undefined);
   const { actions, viewport, movedData, loading, settime } = props;
 
