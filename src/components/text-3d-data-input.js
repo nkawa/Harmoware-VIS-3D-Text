@@ -22,21 +22,21 @@ export const Text3dDataInput = (props)=>{
             const filterData = readdata.filter((data)=>data.length===dataLength)
             let endTime = Number.MIN_SAFE_INTEGER
             const workData = filterData.map((data)=>{
-                const [strElapsedtime,id,x,y,z,text] = data
-                const elapsedtime = parseInt(strElapsedtime)
+                const [strElapsedtime,shikibetu,x,y,z,text] = data
+                const elapsedtime = parseInt(strElapsedtime)*10
                 endTime = Math.max(endTime,elapsedtime)
                 return {
                     elapsedtime:elapsedtime,
-                    id:parseInt(id),
-                    coordinate: [parseFloat(x),parseFloat(y),parseFloat(z)],
+                    shikibetu:parseInt(shikibetu),
+                    position: [parseFloat(x),parseFloat(y),parseFloat(z)],
                     text: text.slice(1,-1),
                 }
             })
             const idTable = workData.reduce((prev,current)=>{
-                if(String(current.id) in prev){
-                    prev[current.id].push(current)
+                if(String(current.shikibetu) in prev){
+                    prev[current.shikibetu].push(current)
                 }else{
-                    prev[current.id] = [current]
+                    prev[current.shikibetu] = [current]
                 }
                 return prev
             },{})
