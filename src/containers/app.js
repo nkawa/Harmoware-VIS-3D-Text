@@ -36,11 +36,18 @@ const App = (props)=>{
   const [viewState, updateViewState] = useState(INITIAL_VIEW_STATE);
   const [saveDataset, setDataset] = useState([[]])
   const [clusterNum, setClusterNum] = useState(10);
+  const [textSiza, setTextSiza] = useState(10);
   const [clusterColor, setClusterColor] = useState(undefined);
   const { actions, viewport, movedData, loading, settime } = props;
 
-  const text3dData = React.useCallback(()=>movedData.filter(x=>x.coordinate),[movedData])()
-  const dataset = React.useCallback(()=>text3dData.map((x)=>x.coordinate),[text3dData])()
+  const text3dData = movedData.filter(x=>x.position)
+  const dataset = text3dData.map((x)=>x.position).sort((a,b)=>{a[0]-b[0]})
+
+  React.useEffect(()=>{
+    if(text3dData.length === 0){
+      setClusterColor(undefined)
+    }
+  },[text3dData])
 
   let flg = false
   if(dataset.length !== saveDataset.length){
@@ -64,35 +71,39 @@ const App = (props)=>{
     }
   }
   if(flg){
-    const clusters = dataset.length>0 ? kmeans.run(dataset, clusterNum) :[]
-    clusters.sort((a, b) => (a.length - b.length))
-    const wkClusterColor = text3dData.reduce((prev,current,idx)=>{
-      for(let i=0; i<clusters.length; i=i+1){
-        if(clusters[i].includes(idx)){
-          prev[current.id] = clusterColors[i]
-          return prev
+    if(clusterColor === undefined && dataset.length>0){
+      const clusters = kmeans.run(dataset, clusterNum)
+      clusters.sort((a, b) => (a[0] - b[0]))
+      const wkClusterColor = text3dData.reduce((prev,current,idx)=>{
+        for(let i=0; i<clusters.length; i=i+1){
+          if(clusters[i].includes(idx)){
+            prev[current.shikibetu] = clusterColors[i]
+            return prev
+          }
         }
-      }
-      prev[current.id] = [255,255,255,255]
-      return prev
-    },{})
-    setClusterColor(wkClusterColor)
+        prev[current.shikibetu] = [255,255,255,255]
+        return prev
+      },{})
+      setClusterColor(wkClusterColor)
+    }
   }
 
   React.useEffect(()=>{
-    const clusters = dataset.length>0 ? kmeans.run(dataset, clusterNum) :[]
-    clusters.sort((a, b) => (a.length - b.length))
-    const wkClusterColor = text3dData.reduce((prev,current,idx)=>{
-      for(let i=0; i<clusters.length; i=i+1){
-        if(clusters[i].includes(idx)){
-          prev[current.id] = clusterColors[i]
-          return prev
+    if(dataset.length>0){
+      const clusters = kmeans.run(dataset, clusterNum)
+      clusters.sort((a, b) => (a.length - b.length))
+      const wkClusterColor = text3dData.reduce((prev,current,idx)=>{
+        for(let i=0; i<clusters.length; i=i+1){
+          if(clusters[i].includes(idx)){
+            prev[current.shikibetu] = clusterColors[i]
+            return prev
+          }
         }
-      }
-      prev[current.id] = [255,255,255,255]
-      return prev
-    },{})
-    setClusterColor(wkClusterColor)
+        prev[current.shikibetu] = [255,255,255,255]
+        return prev
+      },{})
+      setClusterColor(wkClusterColor)
+    }
   },[clusterNum])
 
   React.useEffect(()=>{
@@ -127,8 +138,8 @@ const App = (props)=>{
       id: 'PointCloudLayer',
       data: text3dData,
       coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-      getPosition: x => x.coordinate,
-      getColor: x => x.color || clusterColor[x.id],
+      getPosition: x => x.position,
+      getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
       pointSize: 2,
     });
   }
@@ -139,21 +150,23 @@ const App = (props)=>{
       data: text3dData,
       coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
       characterSet: 'auto',
-      getPosition: x => x.coordinate,
+      getPosition: x => x.position,
       getText: x => x.text,
-      getColor: x => x.color || clusterColor[x.id],
-      getSize: x => 7.5,
+      getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
+      getSize: x => textSiza,
       getTextAnchor: 'start'
     });
   }
 
   return (
     <Container {...props}>
-      <Controller {...props} updateViewState={updateViewState} viewState={viewState} clusterNum={clusterNum} setClusterNum={setClusterNum} />
+      <Controller {...props} updateViewState={updateViewState} viewState={viewState}
+      clusterNum={clusterNum} setClusterNum={setClusterNum}
+      textSiza={textSiza} setTextSiza={setTextSiza}/>
       <div className="harmovis_area">
         <DeckGL
           views={new OrbitView({orbitAxis: 'z', fov: 50})}
-          viewState={viewState} controller={true}
+          viewState={viewState} controller={{scrollZoom:{smooth:true}}}
           onViewStateChange={v => updateViewState(v.viewState)}
           layers={[
               new LineLayer({
