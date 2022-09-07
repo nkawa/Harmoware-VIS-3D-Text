@@ -120,13 +120,8 @@ const App = (props)=>{
 
   const onHover = (el)=>{
     if (el && el.object) {
-      let disptext = '';
-      const objctlist = Object.entries(el.object);
-      for (let i = 0, lengthi = objctlist.length; i < lengthi; i=(i+1)|0) {
-        const strvalue = objctlist[i][1].toString();
-        disptext = disptext + (disptext.length > 0 ? '\n' : '');
-        disptext = disptext + (`${objctlist[i][0]}: ${strvalue}`);
-      }
+      const disptext = `ID:${el.object.shikibetu}\n${el.object.text}\n` +
+      `X:${el.object.position[0]}\nY:${el.object.position[1]}\nZ:${el.object.position[2]}`
       updateState({ popup: [el.x, el.y, disptext] });
     } else {
       updateState({ popup: [0, 0, ''] });
@@ -154,7 +149,9 @@ const App = (props)=>{
       getText: x => x.text,
       getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
       getSize: x => textSiza,
-      getTextAnchor: 'start'
+      getTextAnchor: 'start',
+      pickable: true,
+      onHover
     });
   }
 
