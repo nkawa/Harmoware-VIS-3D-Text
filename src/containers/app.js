@@ -43,6 +43,12 @@ const App = (props)=>{
   const text3dData = movedData.filter(x=>x.position)
   const dataset = text3dData.map((x)=>x.position).sort((a,b)=>{a[0]-b[0]})
 
+  React.useEffect(()=>{
+    if(text3dData.length === 0){
+      setClusterColor(undefined)
+    }
+  },[text3dData])
+
   let flg = false
   if(dataset.length !== saveDataset.length){
     flg = true
