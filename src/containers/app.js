@@ -203,7 +203,7 @@ const App = (props)=>{
                   {coordinate:[52,52,-52],text:'[50,50,-50]',color:[255,255,255,255]},
                   {coordinate:[-52,-52,52],text:'[-50,-50,50]',color:[255,255,255,255]},
                   {coordinate:[-52,52,-52],text:'[-50,50,-50]',color:[255,255,255,255]},
-                  {coordinate:[52,-52,-52],text:'[50,-50,5-0]',color:[255,255,255,255]},
+                  {coordinate:[52,-52,-52],text:'[50,-50,-50]',color:[255,255,255,255]},
                   {coordinate:[-52,-52,-52],text:'[-50,-50,-50]',color:[255,255,255,255]},
                 ],
                 coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
