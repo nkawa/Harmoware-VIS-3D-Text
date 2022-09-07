@@ -13,8 +13,6 @@ const INITIAL_VIEW_STATE = {
   target: [0, 0, 0],
   rotationX: 5,
   rotationOrbit: -5,
-  minZoom: 0,
-  maxZoom: 10,
   zoom: 3
 };
 const kmeans = new Clustering.KMEANS()
@@ -38,16 +36,16 @@ const App = (props)=>{
   const [clusterNum, setClusterNum] = useState(10);
   const [textSiza, setTextSiza] = useState(10);
   const [clusterColor, setClusterColor] = useState(undefined);
-  const { actions, viewport, movedData, loading, settime } = props;
+  const { actions, viewport, movesbase, movedData, loading, settime } = props;
 
   const text3dData = movedData.filter(x=>x.position)
   const dataset = text3dData.map((x)=>x.position).sort((a,b)=>{a[0]-b[0]})
 
   React.useEffect(()=>{
-    if(text3dData.length === 0){
+    if(movesbase.length === 0){
       setClusterColor(undefined)
     }
-  },[text3dData])
+  },[movesbase])
 
   let flg = false
   if(dataset.length !== saveDataset.length){
@@ -136,6 +134,8 @@ const App = (props)=>{
       getPosition: x => x.position,
       getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
       pointSize: 2,
+      pickable: true,
+      onHover
     });
   }
 
