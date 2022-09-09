@@ -13,22 +13,20 @@ const INITIAL_VIEW_STATE = {
   target: [0, 0, 0],
   rotationX: 5,
   rotationOrbit: -5,
-  minZoom: 0,
-  maxZoom: 10,
   zoom: 3
 };
 const kmeans = new Clustering.KMEANS()
 const clusterColors = [
-  [0,0xff,0,0xff],
-  [0xff,0xff,0,0xff],
-  [0xff,0xd7,0,0xff],
-  [0xff,0xa5,0,0xff],
-  [0xff,0,0xff,0xff],
-  [0xff,0,0,0xff],
-  [0xff,0x14,0x93,0xff],
-  [0xc7,0x15,0x85,0xff],
-  [0,0xff,0xff,0xff],
-  [0xff,0xff,0xff,0xff],
+  [0x1f,0x77,0xb4],
+  [0xff,0x7f,0x0e],
+  [0x2c,0xa0,0x2c],
+  [0xd6,0x27,0x28],
+  [0x94,0x67,0xbd],
+  [0x8c,0x56,0x4b],
+  [0xe3,0x77,0xc2],
+  [0x7f,0x7f,0x7f],
+  [0xbc,0xbd,0x22],
+  [0x17,0xbe,0xcf],
 ]
 
 const App = (props)=>{
@@ -38,16 +36,18 @@ const App = (props)=>{
   const [clusterNum, setClusterNum] = useState(10);
   const [textSiza, setTextSiza] = useState(10);
   const [clusterColor, setClusterColor] = useState(undefined);
-  const { actions, viewport, movedData, loading, settime } = props;
+  const [shikibetuTbl, setShikibetuTbl] = useState([]);
+  const { actions, viewport, movesbase, movedData, loading, settime } = props;
 
   const text3dData = movedData.filter(x=>x.position)
   const dataset = text3dData.map((x)=>x.position).sort((a,b)=>{a[0]-b[0]})
 
   React.useEffect(()=>{
-    if(text3dData.length === 0){
+    if(movesbase.length === 0){
       setClusterColor(undefined)
+      setShikibetuTbl([])
     }
-  },[text3dData])
+  },[movesbase])
 
   let flg = false
   if(dataset.length !== saveDataset.length){
@@ -120,17 +120,32 @@ const App = (props)=>{
 
   const onHover = (el)=>{
     if (el && el.object) {
-      let disptext = '';
-      const objctlist = Object.entries(el.object);
-      for (let i = 0, lengthi = objctlist.length; i < lengthi; i=(i+1)|0) {
-        const strvalue = objctlist[i][1].toString();
-        disptext = disptext + (disptext.length > 0 ? '\n' : '');
-        disptext = disptext + (`${objctlist[i][0]}: ${strvalue}`);
-      }
+      const disptext = `ID:${el.object.shikibetu}\n${el.object.text}\n` +
+      `X:${el.object.position[0]}\nY:${el.object.position[1]}\nZ:${el.object.position[2]}`
       updateState({ popup: [el.x, el.y, disptext] });
     } else {
       updateState({ popup: [0, 0, ''] });
     }
+  }
+
+  const onClick = (el)=>{
+    if (el && el.object) {
+      const findResult = shikibetuTbl.findIndex(x=>x===el.object.shikibetu)
+      if(findResult < 0){
+        shikibetuTbl.push(el.object.shikibetu)
+      }else{
+        shikibetuTbl.splice(findResult,1)
+      }
+      setShikibetuTbl(shikibetuTbl)
+      console.log({shikibetuTbl})
+    }
+  }
+
+  const getSize = (x)=>{
+    if(shikibetuTbl.length === 0 || shikibetuTbl.includes(x.shikibetu)){
+      return textSiza
+    }
+    return 0
   }
 
   const getPointCloudLayer = (text3dData)=>{
@@ -140,7 +155,10 @@ const App = (props)=>{
       coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
       getPosition: x => x.position,
       getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
-      pointSize: 2,
+      pointSize: 4,
+      pickable: true,
+      onHover,
+      onClick
     });
   }
 
@@ -153,8 +171,11 @@ const App = (props)=>{
       getPosition: x => x.position,
       getText: x => x.text,
       getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
-      getSize: x => textSiza,
-      getTextAnchor: 'start'
+      getSize: x => getSize(x),
+      getTextAnchor: 'start',
+      pickable: true,
+      onHover,
+      onClick
     });
   }
 
@@ -206,7 +227,7 @@ const App = (props)=>{
                   {coordinate:[52,52,-52],text:'[50,50,-50]',color:[255,255,255,255]},
                   {coordinate:[-52,-52,52],text:'[-50,-50,50]',color:[255,255,255,255]},
                   {coordinate:[-52,52,-52],text:'[-50,50,-50]',color:[255,255,255,255]},
-                  {coordinate:[52,-52,-52],text:'[50,-50,5-0]',color:[255,255,255,255]},
+                  {coordinate:[52,-52,-52],text:'[50,-50,-50]',color:[255,255,255,255]},
                   {coordinate:[-52,-52,-52],text:'[-50,-50,-50]',color:[255,255,255,255]},
                 ],
                 coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,

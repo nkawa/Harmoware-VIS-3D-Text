@@ -21,7 +21,7 @@ export default class Controller extends React.Component {
           rotationX: 5,
           rotationOrbit: -5,
           zoom: 3,
-          transitionDuration: 100,
+          transitionDuration: 200,
         })
         break
       }
