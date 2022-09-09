@@ -36,6 +36,7 @@ const App = (props)=>{
   const [clusterNum, setClusterNum] = useState(10);
   const [textSiza, setTextSiza] = useState(10);
   const [clusterColor, setClusterColor] = useState(undefined);
+  const [shikibetuTbl, setShikibetuTbl] = useState([]);
   const { actions, viewport, movesbase, movedData, loading, settime } = props;
 
   const text3dData = movedData.filter(x=>x.position)
@@ -44,6 +45,7 @@ const App = (props)=>{
   React.useEffect(()=>{
     if(movesbase.length === 0){
       setClusterColor(undefined)
+      setShikibetuTbl([])
     }
   },[movesbase])
 
@@ -126,6 +128,26 @@ const App = (props)=>{
     }
   }
 
+  const onClick = (el)=>{
+    if (el && el.object) {
+      const findResult = shikibetuTbl.findIndex(x=>x===el.object.shikibetu)
+      if(findResult < 0){
+        shikibetuTbl.push(el.object.shikibetu)
+      }else{
+        shikibetuTbl.splice(findResult,1)
+      }
+      setShikibetuTbl(shikibetuTbl)
+      console.log({shikibetuTbl})
+    }
+  }
+
+  const getSize = (x)=>{
+    if(shikibetuTbl.length === 0 || shikibetuTbl.includes(x.shikibetu)){
+      return textSiza
+    }
+    return 0
+  }
+
   const getPointCloudLayer = (text3dData)=>{
     return new PointCloudLayer({
       id: 'PointCloudLayer',
@@ -133,9 +155,10 @@ const App = (props)=>{
       coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
       getPosition: x => x.position,
       getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
-      pointSize: 2,
+      pointSize: 4,
       pickable: true,
-      onHover
+      onHover,
+      onClick
     });
   }
 
@@ -148,10 +171,11 @@ const App = (props)=>{
       getPosition: x => x.position,
       getText: x => x.text,
       getColor: x => clusterColor[x.shikibetu] || [0,0,0xff,0xff],
-      getSize: x => textSiza,
+      getSize: x => getSize(x),
       getTextAnchor: 'start',
       pickable: true,
-      onHover
+      onHover,
+      onClick
     });
   }
 
